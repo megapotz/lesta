@@ -23,7 +23,6 @@ export const listCounterparties = asyncHandler(async (req: Request, res: Respons
               {
                 name: {
                   contains: String(search),
-                  mode: 'insensitive',
                 },
               },
               {

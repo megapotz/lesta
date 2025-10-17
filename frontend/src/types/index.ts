@@ -149,12 +149,29 @@ export interface Comment {
 }
 
 export interface DashboardSummary {
-  summary: {
-    totalCampaigns: number;
-    activeCampaigns: number;
-    plannedBudget: number;
-    totalSpend: number;
+  filters: {
+    period: 'current_month' | 'last_month' | 'quarter' | 'year';
+    product: ProductCode | 'ALL';
+    start: string;
+    end: string;
   };
+  summary: {
+    totalSpend: number;
+    totalPublications: number;
+    averageCpv: number | null;
+    averageEr: number | null;
+  };
+  activeCampaigns: Array<{
+    id: number;
+    name: string;
+    product: ProductCode;
+    startDate: string | null;
+    endDate: string | null;
+    budgetPlanned: number;
+    spend: number;
+    timeProgress: number;
+    budgetProgress: number;
+  }>;
   topBloggers: Array<{
     bloggerId: number;
     name: string;

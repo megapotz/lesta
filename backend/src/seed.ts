@@ -165,6 +165,179 @@ const run = async () => {
     },
   });
 
+  const additionalBloggers = [
+    {
+      name: 'SteelBear',
+      profileUrl: 'https://youtube.com/steelbear',
+      socialPlatform: 'YouTube',
+      followers: 420000,
+      averageReach: 260000,
+      primaryChannel: ContactChannel.EMAIL,
+      primaryContact: 'steelbear@mediahub.ru',
+      placement: {
+        type: PlacementType.VIDEO,
+        fee: 90000,
+        views: 410000,
+        engagementRate: 7.2,
+      },
+    },
+    {
+      name: 'MarinaWaves',
+      profileUrl: 'https://t.me/marinawaves',
+      socialPlatform: 'Telegram',
+      followers: 180000,
+      averageReach: 120000,
+      primaryChannel: ContactChannel.TELEGRAM,
+      primaryContact: '@marina_waves',
+      placement: {
+        type: PlacementType.STREAM,
+        fee: 75000,
+        views: 280000,
+        engagementRate: 9.1,
+      },
+    },
+    {
+      name: 'TankAce',
+      profileUrl: 'https://vk.com/tankace',
+      socialPlatform: 'VK',
+      followers: 250000,
+      averageReach: 165000,
+      primaryChannel: ContactChannel.PHONE,
+      primaryContact: '+7 495 555-14-14',
+      placement: {
+        type: PlacementType.POST,
+        fee: 68000,
+        views: 210000,
+        engagementRate: 6.7,
+      },
+    },
+    {
+      name: 'BlitzQueen',
+      profileUrl: 'https://youtube.com/blitzqueen',
+      socialPlatform: 'YouTube',
+      followers: 540000,
+      averageReach: 330000,
+      primaryChannel: ContactChannel.EMAIL,
+      primaryContact: 'queen@blitzchannel.tv',
+      placement: {
+        type: PlacementType.SHORT_FORM,
+        fee: 82000,
+        views: 360000,
+        engagementRate: 8.8,
+      },
+    },
+    {
+      name: 'HarborHero',
+      profileUrl: 'https://t.me/harborhero',
+      socialPlatform: 'Telegram',
+      followers: 95000,
+      averageReach: 64000,
+      primaryChannel: ContactChannel.TELEGRAM,
+      primaryContact: '@harborhero',
+      placement: {
+        type: PlacementType.POST,
+        fee: 47000,
+        views: 150000,
+        engagementRate: 5.4,
+      },
+    },
+    {
+      name: 'ArcticFox',
+      profileUrl: 'https://youtube.com/arcticfox',
+      socialPlatform: 'YouTube',
+      followers: 310000,
+      averageReach: 205000,
+      primaryChannel: ContactChannel.EMAIL,
+      primaryContact: 'fox@northstudio.dev',
+      placement: {
+        type: PlacementType.VIDEO,
+        fee: 99000,
+        views: 430000,
+        engagementRate: 10.3,
+      },
+    },
+    {
+      name: 'StreamerNova',
+      profileUrl: 'https://twitch.tv/streamernova',
+      socialPlatform: 'Twitch',
+      followers: 670000,
+      averageReach: 420000,
+      primaryChannel: ContactChannel.EMAIL,
+      primaryContact: 'nova@streamline.gg',
+      placement: {
+        type: PlacementType.STREAM,
+        fee: 120000,
+        views: 520000,
+        engagementRate: 11.8,
+      },
+    },
+    {
+      name: 'CaptainIlya',
+      profileUrl: 'https://youtube.com/captainilya',
+      socialPlatform: 'YouTube',
+      followers: 390000,
+      averageReach: 240000,
+      primaryChannel: ContactChannel.EMAIL,
+      primaryContact: 'ilya@captainstudio.ru',
+      placement: {
+        type: PlacementType.VIDEO,
+        fee: 88000,
+        views: 340000,
+        engagementRate: 7.5,
+      },
+    },
+    {
+      name: 'DroneMaster',
+      profileUrl: 'https://rutube.ru/channel/dronemaster',
+      socialPlatform: 'RuTube',
+      followers: 145000,
+      averageReach: 90000,
+      primaryChannel: ContactChannel.EMAIL,
+      primaryContact: 'hello@dronemaster.io',
+      placement: {
+        type: PlacementType.VIDEO,
+        fee: 56000,
+        views: 190000,
+        engagementRate: 6.1,
+      },
+    },
+  ];
+
+  for (const seed of additionalBloggers) {
+    const created = await prisma.blogger.create({
+      data: {
+        name: seed.name,
+        profileUrl: seed.profileUrl,
+        socialPlatform: seed.socialPlatform,
+        followers: seed.followers,
+        averageReach: seed.averageReach,
+        primaryChannel: seed.primaryChannel,
+        primaryContact: seed.primaryContact,
+        createdById: manager.id,
+        counterparties: {
+          create: [{ counterparty: { connect: { id: counterparty.id } } }],
+        },
+      },
+    });
+
+    await createPlacement(
+      {
+        campaignId: campaign.id,
+        bloggerId: created.id,
+        counterpartyId: counterparty.id,
+        placementType: seed.placement.type,
+        pricingModel: PricingModel.FIX,
+        paymentTerms: PaymentTerms.POSTPAYMENT,
+        placementDate: new Date().toISOString(),
+        fee: seed.placement.fee,
+        status: PlacementStatus.PUBLISHED,
+        views: seed.placement.views,
+        engagementRate: seed.placement.engagementRate,
+      },
+      manager,
+    );
+  }
+
   console.info('Seed completed successfully.');
 };
 

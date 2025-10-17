@@ -440,6 +440,50 @@ button {
   color: #1f2933;
 }
 
+.progress-dual {
+  position: relative;
+  height: 12px;
+  background: #e5edf5;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-dual__layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border-radius: 999px;
+}
+
+.progress-dual__layer--time {
+  background: rgba(26, 59, 139, 0.35);
+}
+
+.progress-dual__layer--budget-green {
+  background: linear-gradient(120deg, #0f9d58, #1dd16a);
+}
+
+.progress-dual__layer--budget-yellow {
+  background: linear-gradient(120deg, #f59e0b, #fbbf24);
+}
+
+.progress-dual__legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #506176;
+}
+
+.progress-budget {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 600;
+  color: #1f2933;
+}
+
 .detail-metrics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

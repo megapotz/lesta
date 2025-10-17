@@ -1,10 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { apiClient } from '@/api/client';
-import type { DashboardSummary } from '@/types';
+import type { DashboardSummary, ProductCode } from '@/types';
 
-export const useDashboardSummary = () =>
+type DashboardFilters = {
+  period?: 'current_month' | 'last_month' | 'quarter' | 'year';
+  product?: ProductCode | 'ALL';
+};
+
+export const useDashboardSummary = (filters: DashboardFilters = {}) =>
   useQuery({
-    queryKey: ['dashboard'],
-    queryFn: () => apiClient.get<DashboardSummary>('/api/dashboard'),
+    queryKey: ['dashboard', filters],
+    queryFn: () =>
+      apiClient.get<DashboardSummary>('/api/dashboard', {
+        query: {
+          period: filters.period,
+          product: filters.product && filters.product !== 'ALL' ? filters.product : undefined,
+        },
+      }),
   });

@@ -14,6 +14,7 @@ We will deliver a demonstrable Lesta Blogger HUB prototype that lets marketing m
 - [x] (2025-10-17 09:35Z) Added Prisma schema push and seed script with demo records.
 - [x] (2025-10-17 10:15Z) Assembled SPA shell with authentication context, layout, and shared query provider.
 - [x] (2025-10-17 10:45Z) Built interactive feature pages (dashboard, campaigns, placements, bloggers, counterparties, users) wired to live APIs.
+- [x] (2025-10-17 12:10Z) Align dashboard analytics with ТЗ (filters, KPIs, active campaign progress, richer seed data).
 - [ ] Exercise end-to-end flows, capture acceptance evidence, and update docs.
 
 ## Surprises & Discoveries
