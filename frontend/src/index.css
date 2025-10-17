@@ -177,6 +177,12 @@ button {
   font-weight: 600;
 }
 
+.card__subtitle {
+  margin: 0;
+  color: #506176;
+  font-size: 0.95rem;
+}
+
 .page-stack {
   display: flex;
   flex-direction: column;
@@ -299,6 +305,244 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+}
+
+.breadcrumbs {
+  font-size: 0.85rem;
+  color: #5f738c;
+}
+
+.breadcrumbs__list {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+}
+
+.breadcrumbs__item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.breadcrumbs__item::after {
+  content: '/';
+  margin-left: 0.35rem;
+  color: #c7d5e0;
+}
+
+.breadcrumbs__item:last-of-type::after {
+  display: none;
+}
+
+.breadcrumbs__link {
+  color: #1a3b8b;
+  text-decoration: none;
+}
+
+.breadcrumbs__link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbs__current {
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.link {
+  color: #1a3b8b;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: #1a3b8b;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
+.table__actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.column-toggle {
+  position: relative;
+}
+
+.column-toggle__menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  background: #ffffff;
+  border: 1px solid #d6e0eb;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.15);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  min-width: 220px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.column-toggle__option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.column-toggle__option input[type='checkbox'] {
+  accent-color: #1a3b8b;
+}
+
+.tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f1f5fc;
+  padding: 0.35rem;
+  border-radius: 999px;
+}
+
+.tabs__button {
+  border: none;
+  background: transparent;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #1a3b8b;
+  transition: background 0.2s ease;
+}
+
+.tabs__button:hover {
+  background: rgba(26, 59, 139, 0.1);
+}
+
+.tabs__button--active {
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(26, 59, 139, 0.15);
+  color: #1f2933;
+}
+
+.detail-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.detail-metrics__item {
+  background: #f1f5fc;
+  padding: 0.9rem;
+  border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.detail-metrics__label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #5f738c;
+  letter-spacing: 0.03em;
+}
+
+.detail-metrics__value {
+  font-weight: 600;
+  color: #1f2933;
+  font-size: 1rem;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.detail-grid__group h4 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #1a3b8b;
+}
+
+.detail-grid__group dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto;
+  gap: 0.4rem;
+}
+
+.detail-grid__group dt {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #5f738c;
+}
+
+.detail-grid__group dd {
+  margin: 0 0 0.6rem;
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.table-wrapper {
+  margin-top: 1.5rem;
+  overflow-x: auto;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.history-list__item {
+  padding: 1rem;
+  border: 1px solid #e5edf5;
+  border-radius: 0.75rem;
+  background: #f9fbff;
+}
+
+.history-list__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #506176;
+}
+
+.history-list__author {
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.history-list__timestamp {
+  color: #5f738c;
+}
+
+.history-list__body {
+  margin: 0;
+  color: #1f2933;
+  line-height: 1.5;
 }
 
 .dashboard-grid {

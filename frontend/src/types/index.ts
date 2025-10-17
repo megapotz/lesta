@@ -59,6 +59,11 @@ export interface Counterparty {
   taxPhone?: string | null;
   paymentDetails?: string | null;
   isActive: boolean;
+  bloggers?: Array<{
+    bloggerId: number;
+    blogger: Blogger;
+  }>;
+  placements?: Placement[];
 }
 
 export type ContactChannel = 'EMAIL' | 'TELEGRAM' | 'WHATSAPP' | 'PHONE';

@@ -1,4 +1,4 @@
-import { CounterpartyType, Prisma } from '@prisma/client';
+import { CounterpartyRelationship, CounterpartyType, Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 
 import { prisma } from '../lib/prisma';
@@ -6,21 +6,32 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { createCounterpartySchema, updateCounterpartySchema } from '../validation/counterpartySchemas';
 
 export const listCounterparties = asyncHandler(async (req: Request, res: Response) => {
-  const { type, active, search } = req.query;
+  const { type, active, search, relationshipType } = req.query;
 
   const counterparties = await prisma.counterparty.findMany({
     where: {
       ...(type ? { type: type as CounterpartyType } : {}),
-      ...(active !== undefined
+      ...(relationshipType ? { relationshipType: relationshipType as CounterpartyRelationship } : {}),
+      ...(active !== undefined && String(active).length
         ? {
             isActive: active === 'true',
           }
         : {}),
       ...(search
         ? {
-            name: {
-              contains: String(search),
-            },
+            OR: [
+              {
+                name: {
+                  contains: String(search),
+                  mode: 'insensitive',
+                },
+              },
+              {
+                inn: {
+                  contains: String(search),
+                },
+              },
+            ],
           }
         : {}),
     },

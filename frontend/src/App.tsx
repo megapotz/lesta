@@ -8,8 +8,8 @@ import { DashboardPage } from '@/pages/dashboard/DashboardPage';
 import { CampaignListPage } from '@/pages/campaigns/CampaignListPage';
 import { CampaignDetailPage } from '@/pages/campaigns/CampaignDetailPage';
 import { PlacementListPage } from '@/pages/placements/PlacementListPage';
-import { BloggerListPage } from '@/pages/bloggers/BloggerListPage';
-import { CounterpartyListPage } from '@/pages/counterparties/CounterpartyListPage';
+import { PartnersPage } from '@/pages/partners/PartnersPage';
+import { CounterpartyDetailPage } from '@/pages/counterparties/CounterpartyDetailPage';
 import { UserListPage } from '@/pages/users/UserListPage';
 
 const App: React.FC = () => {
@@ -37,8 +37,10 @@ const App: React.FC = () => {
         <Route path="campaigns" element={<CampaignListPage />} />
         <Route path="campaigns/:id" element={<CampaignDetailPage />} />
         <Route path="placements" element={<PlacementListPage />} />
-        <Route path="bloggers" element={<BloggerListPage />} />
-        <Route path="counterparties" element={<CounterpartyListPage />} />
+        <Route path="partners" element={<PartnersPage />} />
+        <Route path="bloggers" element={<Navigate to="/partners?tab=bloggers" replace />} />
+        <Route path="counterparties" element={<Navigate to="/partners?tab=counterparties" replace />} />
+        <Route path="counterparties/:id" element={<CounterpartyDetailPage />} />
         <Route path="users" element={<UserListPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

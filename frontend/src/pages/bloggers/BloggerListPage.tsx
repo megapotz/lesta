@@ -1,13 +1,29 @@
 import type { FormEvent } from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useBloggers, useCreateBlogger } from '@/api/queries/bloggers';
 import { useCounterparties } from '@/api/queries/counterparties';
+import { Breadcrumbs } from '@/components/common/Breadcrumbs';
 import { CONTACT_CHANNEL_OPTIONS } from '@/utils/constants';
 import { formatNumber } from '@/utils/formatters';
 
-export const BloggerListPage: React.FC = () => {
-  const [filters, setFilters] = useState({ search: '', socialPlatform: '' });
+type BloggerListPageProps = {
+  counterpartyId?: number;
+};
+
+type FilterState = {
+  search: string;
+  social: string;
+  counterpartyId: string;
+};
+
+export const BloggerListPage: React.FC<BloggerListPageProps> = ({ counterpartyId }) => {
+  const [filters, setFilters] = useState<FilterState>({
+    search: '',
+    social: '',
+    counterpartyId: counterpartyId ? String(counterpartyId) : '',
+  });
+  const [filterInputs, setFilterInputs] = useState<FilterState>(filters);
   const [isCreating, setCreating] = useState(false);
   const [formState, setFormState] = useState<{
     name: string;
@@ -29,19 +45,31 @@ export const BloggerListPage: React.FC = () => {
     counterpartyId: '',
   });
 
-  const { data, isLoading } = useBloggers(filters);
-  const { data: counterparties } = useCounterparties({ isActive: true });
+  const { data, isLoading } = useBloggers({
+    ...(filters.search ? { search: filters.search } : {}),
+    ...(filters.social ? { social: filters.social } : {}),
+    ...(filters.counterpartyId ? { counterpartyId: Number(filters.counterpartyId) } : {}),
+  });
+  const { data: counterparties } = useCounterparties({ active: 'true' });
   const createBlogger = useCreateBlogger();
 
   const bloggers = data?.bloggers ?? [];
 
+  useEffect(() => {
+    const nextId = counterpartyId ? String(counterpartyId) : '';
+    setFilters((prev) => ({ ...prev, counterpartyId: nextId }));
+    setFilterInputs((prev) => ({ ...prev, counterpartyId: nextId }));
+  }, [counterpartyId]);
+
   const handleFilterSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    setFilters({
-      search: (formData.get('search') as string) ?? '',
-      socialPlatform: (formData.get('socialPlatform') as string) ?? '',
-    });
+    setFilters(filterInputs);
+  };
+
+  const handleResetFilters = () => {
+    const reset = { search: '', social: '', counterpartyId: filterInputs.counterpartyId };
+    setFilterInputs(reset);
+    setFilters(reset);
   };
 
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
@@ -49,7 +77,7 @@ export const BloggerListPage: React.FC = () => {
     await createBlogger.mutateAsync({
       name: formState.name,
       profileUrl: formState.profileUrl,
-      socialPlatform: formState.socialPlatform,
+      socialPlatform: formState.socialPlatform || undefined,
       followers: formState.followers ? Number(formState.followers) : undefined,
       averageReach: formState.averageReach ? Number(formState.averageReach) : undefined,
       primaryChannel: formState.primaryChannel || undefined,
@@ -73,6 +101,13 @@ export const BloggerListPage: React.FC = () => {
 
   return (
     <div className="page-stack">
+      <Breadcrumbs
+        items={[
+          { label: 'Партнеры', to: '/partners' },
+          { label: 'Блогеры' },
+        ]}
+      />
+
       <section className="card">
         <div className="card__header">
           <h2 className="card__title">Блогеры</h2>
@@ -83,17 +118,29 @@ export const BloggerListPage: React.FC = () => {
         <form className="filter-grid" onSubmit={handleFilterSubmit}>
           <div className="form-control">
             <label htmlFor="blogger-search">Поиск</label>
-            <input id="blogger-search" name="search" placeholder="Название или профиль" />
+            <input
+              id="blogger-search"
+              name="search"
+              placeholder="Название или профиль"
+              value={filterInputs.search}
+              onChange={(event) => setFilterInputs((prev) => ({ ...prev, search: event.target.value }))}
+            />
           </div>
           <div className="form-control">
             <label htmlFor="social">Площадка</label>
-            <input id="social" name="socialPlatform" placeholder="Например, Telegram" />
+            <input
+              id="social"
+              name="social"
+              placeholder="Например, Telegram"
+              value={filterInputs.social}
+              onChange={(event) => setFilterInputs((prev) => ({ ...prev, social: event.target.value }))}
+            />
           </div>
           <div className="form-control filter-actions">
             <button className="button" type="submit">
-              Поиск
+              Применить
             </button>
-            <button className="button button--ghost" type="button" onClick={() => setFilters({ search: '', socialPlatform: '' })}>
+            <button className="button button--ghost" type="button" onClick={handleResetFilters}>
               Очистить
             </button>
           </div>
@@ -181,16 +228,16 @@ export const BloggerListPage: React.FC = () => {
                 onChange={(event) => setFormState((prev) => ({ ...prev, counterpartyId: event.target.value }))}
               >
                 <option value="">Не привязан</option>
-                {counterpartyOptions.map((counterparty) => (
-                  <option key={counterparty.id} value={counterparty.id}>
-                    {counterparty.name}
+                {counterpartyOptions.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
                   </option>
                 ))}
               </select>
             </div>
             <div className="form-control form-actions">
-            <button className="button" type="submit" disabled={createBlogger.isPending}>
-              {createBlogger.isPending ? 'Добавляем...' : 'Сохранить'}
+              <button className="button" type="submit" disabled={createBlogger.isPending}>
+                {createBlogger.isPending ? 'Добавляем...' : 'Сохранить'}
               </button>
             </div>
           </form>
@@ -209,7 +256,7 @@ export const BloggerListPage: React.FC = () => {
                 <th>Площадка</th>
                 <th>Подписчики</th>
                 <th>Средний охват</th>
-                <th>Контрагент</th>
+                <th>Контрагенты</th>
                 <th>Контакт</th>
               </tr>
             </thead>
