@@ -1,0 +1,248 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+}
+
+enum UserStatus {
+  INVITED
+  ACTIVE
+  DEACTIVATED
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+}
+
+enum ProductCode {
+  TANKS
+  SHIPS
+  BLITZ
+}
+
+enum PlacementStatus {
+  PLANNED
+  AGREED
+  DECLINED
+  AWAITING_PAYMENT
+  AWAITING_PUBLICATION
+  PUBLISHED
+  OVERDUE
+  CLOSED
+}
+
+enum PaymentTerms {
+  PREPAYMENT
+  POSTPAYMENT
+  PARTIAL
+}
+
+enum PricingModel {
+  FIX
+  CPA
+  REVSHARE
+  BARTER
+}
+
+enum PlacementType {
+  POST
+  VIDEO
+  SHORT_FORM
+  STREAM
+  STORIES
+  INTEGRATION
+  ANNOUNCEMENT
+}
+
+enum ContactChannel {
+  EMAIL
+  TELEGRAM
+  WHATSAPP
+  PHONE
+}
+
+enum CounterpartyType {
+  SELF_EMPLOYED
+  SOLE_PROPRIETOR
+  LEGAL_ENTITY
+}
+
+enum CounterpartyRelationship {
+  DIRECT
+  AGENCY
+  CPA_NETWORK
+}
+
+model User {
+  id           Int         @id @default(autoincrement())
+  name         String
+  email        String      @unique
+  passwordHash String
+  role         UserRole
+  status       UserStatus  @default(INVITED)
+  inviteToken  String?     @unique
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  campaignsCreated Campaign[] @relation("CampaignCreator")
+  campaignsOwned   Campaign[] @relation("CampaignOwner")
+  bloggersCreated  Blogger[]  @relation("BloggerCreator")
+  counterpartiesCreated Counterparty[] @relation("CounterpartyCreator")
+  placementsCreated Placement[] @relation("PlacementCreator")
+  comments        Comment[]
+}
+
+model Campaign {
+  id               Int            @id @default(autoincrement())
+  name             String
+  product          ProductCode
+  goal             String?
+  type             String?
+  budgetPlanned    Decimal?
+  status           CampaignStatus @default(DRAFT)
+  startDate        DateTime?
+  endDate          DateTime?
+  alanbaseSub2     String?        @unique
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  createdById      Int
+  ownerId          Int
+
+  createdBy User @relation("CampaignCreator", fields: [createdById], references: [id])
+  owner     User @relation("CampaignOwner", fields: [ownerId], references: [id])
+  placements Placement[]
+}
+
+model Counterparty {
+  id                 Int                       @id @default(autoincrement())
+  name               String
+  type               CounterpartyType
+  relationshipType   CounterpartyRelationship
+  contactName        String?
+  email              String?
+  phone              String?
+  inn                String?
+  kpp                String?
+  ogrn               String?
+  ogrnip             String?
+  legalAddress       String?
+  registrationAddress String?
+  checkingAccount    String?
+  bankName           String?
+  bik                String?
+  correspondentAccount String?
+  taxPhone           String?
+  paymentDetails     String?
+  isActive           Boolean         @default(true)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  createdById        Int
+
+  createdBy    User                 @relation("CounterpartyCreator", fields: [createdById], references: [id])
+  bloggers     BloggerCounterparty[]
+  placements   Placement[]
+  comments     Comment[]
+}
+
+model Blogger {
+  id               Int                       @id @default(autoincrement())
+  name             String
+  profileUrl       String                    @unique
+  socialPlatform   String?
+  followers        Int?
+  averageReach     Int?
+  primaryContact   String?
+  primaryChannel   ContactChannel?
+  alanbaseSub3     String?                   @unique
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  createdById      Int
+
+  createdBy      User                 @relation("BloggerCreator", fields: [createdById], references: [id])
+  counterparties BloggerCounterparty[]
+  placements     Placement[]
+  pricePresets   PricePreset[]
+  comments       Comment[]
+}
+
+model BloggerCounterparty {
+  bloggerId     Int
+  counterpartyId Int
+
+  blogger     Blogger     @relation(fields: [bloggerId], references: [id])
+  counterparty Counterparty @relation(fields: [counterpartyId], references: [id])
+
+  @@id([bloggerId, counterpartyId])
+}
+
+model PricePreset {
+  id          Int      @id @default(autoincrement())
+  bloggerId   Int
+  title       String
+  description String?
+  cost        Decimal
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  blogger Blogger @relation(fields: [bloggerId], references: [id])
+}
+
+model Placement {
+  id                Int             @id @default(autoincrement())
+  campaignId        Int
+  bloggerId         Int
+  counterpartyId    Int
+  createdById       Int
+  status            PlacementStatus @default(PLANNED)
+  placementType     PlacementType
+  pricingModel      PricingModel
+  paymentTerms      PaymentTerms
+  placementDate     DateTime?
+  fee               Decimal?
+  placementUrl      String?
+  screenshotUrl     String?
+  trackingLink      String?
+  alanbaseSub1      String?         @unique
+  eridToken         String?
+  views             Int?
+  likes             Int?
+  commentsCount     Int?
+  shares            Int?
+  roi               Decimal?
+  engagementRate    Decimal?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  campaign     Campaign    @relation(fields: [campaignId], references: [id])
+  blogger      Blogger     @relation(fields: [bloggerId], references: [id])
+  counterparty Counterparty @relation(fields: [counterpartyId], references: [id])
+  createdBy    User        @relation("PlacementCreator", fields: [createdById], references: [id])
+  comments     Comment[]
+}
+
+model Comment {
+  id             Int       @id @default(autoincrement())
+  body           String
+  isSystem       Boolean   @default(false)
+  authorId       Int
+  bloggerId      Int?
+  counterpartyId Int?
+  placementId    Int?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  author      User        @relation(fields: [authorId], references: [id])
+  blogger     Blogger?    @relation(fields: [bloggerId], references: [id])
+  counterparty Counterparty? @relation(fields: [counterpartyId], references: [id])
+  placement   Placement?  @relation(fields: [placementId], references: [id])
+}

@@ -1,0 +1,27 @@
+{
+  "name": "lestahub",
+  "version": "0.1.0",
+  "scripts": {
+    "backend:dev": "npm run dev --workspace backend",
+    "backend:test": "npm run test --workspace backend",
+    "backend:build": "npm run build --workspace backend",
+    "backend:seed": "npm run seed --workspace backend",
+    "frontend:dev": "npm run dev --workspace frontend",
+    "frontend:test": "npm run test --workspace frontend",
+    "frontend:build": "npm run build --workspace frontend",
+    "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "build": "npm run backend:build && npm run frontend:build",
+    "test": "npm run backend:test && npm run frontend:test",
+    "seed": "npm run backend:seed",
+    "format": "prettier --check ."
+  },
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.4.2"
+  }
+}
