@@ -17,7 +17,7 @@ import {
   formatCurrency,
   formatNumber,
 } from '@/utils/formatters';
-import type { Counterparty } from '@/types';
+import type { Counterparty, CounterpartyRelationship, CounterpartyType } from '@/types';
 import { Breadcrumbs } from '@/components/common/Breadcrumbs';
 
 type ColumnId = 'name' | 'type' | 'inn' | 'relationshipType' | 'bloggers' | 'payouts' | 'actions';
@@ -34,10 +34,31 @@ const columnConfig: Array<{ id: ColumnId; label: string; locked?: boolean }> = [
 
 const columnStorageKey = 'counterparties.table.columns';
 
-const defaultFormState = {
+type FormState = {
+  name: string;
+  type: CounterpartyType;
+  relationshipType: CounterpartyRelationship;
+  contactName: string;
+  email: string;
+  phone: string;
+  inn: string;
+  kpp: string;
+  ogrn: string;
+  ogrnip: string;
+  legalAddress: string;
+  registrationAddress: string;
+  checkingAccount: string;
+  bankName: string;
+  bik: string;
+  correspondentAccount: string;
+  taxPhone: string;
+  paymentDetails: string;
+};
+
+const defaultFormState: FormState = {
   name: '',
-  type: COUNTERPARTY_TYPE_OPTIONS[0]?.value ?? 'LEGAL_ENTITY',
-  relationshipType: COUNTERPARTY_RELATIONSHIP_OPTIONS[0]?.value ?? 'DIRECT',
+  type: (COUNTERPARTY_TYPE_OPTIONS[0]?.value ?? 'LEGAL_ENTITY') as CounterpartyType,
+  relationshipType: (COUNTERPARTY_RELATIONSHIP_OPTIONS[0]?.value ?? 'DIRECT') as CounterpartyRelationship,
   contactName: '',
   email: '',
   phone: '',
@@ -54,8 +75,6 @@ const defaultFormState = {
   taxPhone: '',
   paymentDetails: '',
 };
-
-type FormState = typeof defaultFormState;
 type FilterState = {
   search: string;
   type: string;
@@ -404,7 +423,12 @@ export const CounterpartyListPage: React.FC<CounterpartyListPageProps> = ({
               <select
                 id="partner-type"
                 value={formState.type}
-                onChange={(event) => setFormState((prev) => ({ ...prev, type: event.target.value }))}
+                onChange={(event) =>
+                  setFormState((prev) => ({
+                    ...prev,
+                    type: event.target.value as CounterpartyType,
+                  }))
+                }
               >
                 {COUNTERPARTY_TYPE_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -418,7 +442,12 @@ export const CounterpartyListPage: React.FC<CounterpartyListPageProps> = ({
               <select
                 id="partner-rel"
                 value={formState.relationshipType}
-                onChange={(event) => setFormState((prev) => ({ ...prev, relationshipType: event.target.value }))}
+                onChange={(event) =>
+                  setFormState((prev) => ({
+                    ...prev,
+                    relationshipType: event.target.value as CounterpartyRelationship,
+                  }))
+                }
               >
                 {COUNTERPARTY_RELATIONSHIP_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
